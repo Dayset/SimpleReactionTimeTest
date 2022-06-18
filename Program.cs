@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace SimpleReactionTimeTest
 {
@@ -23,7 +25,8 @@ namespace SimpleReactionTimeTest
         }
 
         private static void FindCenter(string _, int Y = 0)
-        {
+        {   // Y - is the desired position of menu line
+            // I am not able to find it out yet without manual declaration
             int value = (Console.WindowWidth / 2) - (_.Length / 2);
             Console.SetCursorPosition((value), Y);
             Console.WriteLine(_);
@@ -141,14 +144,83 @@ namespace SimpleReactionTimeTest
         {
             string buttonTest = "Button";
             FindCenter(buttonTest);
+
+            Thread.Sleep(500);
+            string soundTestVolumeWarning = "Please be ready.";
+            FindCenter(soundTestVolumeWarning, 1);
             Thread.Sleep(1000);
+            string soundTestKey = "Press >>> SPACE <<< any moment from NOW";
+            FindCenter(soundTestKey, 2);
+            Thread.Sleep(1000);
+
+            Random rnd = new Random();
+            Stopwatch reaction = new Stopwatch();
+            int sleepRandomTime = rnd.Next(2000, 5000);
+
+            Thread.Sleep(sleepRandomTime);
+            Task.Run(() => FindCenter(
+            "##########", 4));
+            reaction.Start();
+
+            begin:
+            if (Console.KeyAvailable)
+            {
+                if (Console.ReadKey().Key == ConsoleKey.Spacebar)
+                {
+                    reaction.Stop();
+                    FindCenter("Time: " + reaction.ElapsedMilliseconds, 5);
+                    Thread.Sleep(1000);
+                    FindCenter("Not bad! Try Again", 7);
+                    Thread.Sleep(2000);
+
+                    goto end;
+                }
+            }
+            goto begin;
+            end:
+            reaction.Stop();
+            Console.ReadKey();
         }
 
         public static void SoundReactionTest()
         {
             string soundTest = "Sound";
             FindCenter(soundTest);
+
+            Thread.Sleep(500);
+            string soundTestVolumeWarning = "Please set your volume.";
+            FindCenter(soundTestVolumeWarning, 1);
             Thread.Sleep(1000);
+            string soundTestKey = "Press >>> SPACE @ BEEP <<< on any moment from NOW";
+            FindCenter(soundTestKey, 2);
+            Thread.Sleep(1000);
+
+            Random rnd = new Random();
+            Stopwatch reaction = new Stopwatch();
+            int sleepRandomTime = rnd.Next(2000, 5000);
+
+            Thread.Sleep(sleepRandomTime);
+            Task.Run(() => Console.Beep(1000, 500));
+            reaction.Start();
+
+            begin:
+            if (Console.KeyAvailable)
+            {
+                if (Console.ReadKey().Key == ConsoleKey.Spacebar)
+                {
+                    reaction.Stop();
+                    FindCenter("Time: " + reaction.ElapsedMilliseconds, 5);
+                    Thread.Sleep(1000);
+                    FindCenter("Not bad! Try Again", 7);
+                    Thread.Sleep(2000);
+
+                    goto end;
+                }
+            }
+            goto begin;
+            end:
+            reaction.Stop();
+            Console.ReadKey();
         }
     }
 }
